@@ -237,6 +237,21 @@ public class InvestmentDataDB {
     for (int i = 0; i < holdingsJSONArray.length(); i++) {
 
       holdingElementJson = (JSONObject) holdingsJSONArray.get(i);
+      String optionTypeId = holdingElementJson.getString("optionTypeId");
+      System.out.println("optionTypeId=" + optionTypeId);
+      
+      String optionType = holdingElementJson.getString("optionType");
+      System.out.println("optionType=" + optionType);
+      
+      String localizedOptionType = holdingElementJson.getString("localizedOptionType");
+      System.out.println("localizedOptionType=" + localizedOptionType);
+      
+      String isSeidFromDataSource = holdingElementJson.getString("isSeidFromDataSource");
+      System.out.println("isSeidFromDataSource=" + isSeidFromDataSource);
+
+      String bondTypeId = holdingElementJson.getString("bondTypeId");
+      System.out.println("bondTypeId=" + bondTypeId);
+      
       String holdingId = holdingElementJson.getString("holdingId");
       System.out.println("holdingId=" + holdingId);
 
