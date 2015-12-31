@@ -12,6 +12,8 @@ public class InvestmentData {
 
   int yodleeInvestmentDataID;
   int accountType;
+  int itemId;
+  int userId; 
   String accountNumber;
   String accountName;
   String accountClassification;
@@ -23,27 +25,43 @@ public class InvestmentData {
   Double totalVestedBalance;
   String accountHolder;
   Double moneyMarketBalance;
-  Double accruedInterest;
-  int yodleeAccountStatusID;
+  Double accruedInterest; // not available
+  int yodleeAccountStatusID; // TODO yet to scrape
   Double totalUnVestedBalance;
-  Double totalInVestedAmount;
+  Double totalInVestedAmount; // not availble 
   Double t401kLoan;
-  String secondaryAccountHolderName;
-  String linkedBankAccountNumber;
-  String nomineeName;
-  Date accountOpenDate;
-  Date accountCloseDate;
-  String planNumber;
-  String mutualFundFolioNumber;
-  String annuityBalance;
-  Double annuityDeathBenefit;
-  Double cashOptionBuyingPower;
-  Double dayTradingMarginBuyingPower;
-  Double dividendEarnedAsPayOut;
+  String secondaryAccountHolderName; // not availble 
+  String linkedBankAccountNumber; // not availble
+  String nomineeName;// not availble
+  Date accountOpenDate;// not availble
+  Date accountCloseDate;// not availble
+  String planNumber; 
+  String mutualFundFolioNumber; // not availble
+  String annuityBalance; // not availble
+  Double annuityDeathBenefit;// not availble
+  Double cashOptionBuyingPower;// not availble
+  Double dayTradingMarginBuyingPower;// not availble
+  Double dividendEarnedAsPayOut;// not availble
   Double shortBalance;
 
   List<Holdings> holdingsList = new ArrayList<Holdings>();
 
+
+  public int getItemId() {
+    return itemId;
+  }
+
+  public void setItemId(int itemId) {
+    this.itemId = itemId;
+  }
+
+  public int getUserId() {
+    return userId;
+  }
+
+  public void setUserId(int userId) {
+    this.userId = userId;
+  }
 
   public List<Holdings> getHoldingsList() {
     return holdingsList;

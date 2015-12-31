@@ -3,6 +3,7 @@ package com.yarish.yodlee.app;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Date;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -503,6 +504,7 @@ public class SiteAccount {
   public SiteAccount getItemSummariesForSite(String cobrandSessionToken, String userSessionToken) {
 
     DefaultHttpClient httpclient = new DefaultHttpClient();
+    InvestmentData investmentData = new InvestmentData();
 
     String url = Constants.HOST_URI + Constants.ITEM_SUMMARIES;
     try {
@@ -531,15 +533,20 @@ public class SiteAccount {
         sb.append(read);
         read = br.readLine();
       }
+      
+      
       String source = sb.toString();
       LOG.debug("source=" + source);
-
-
-      // JSONObject jsonArray = new JSONObject(source);
 
       JSONArray jsonArray = new JSONArray(source);
       JSONObject jsonObject = (JSONObject) jsonArray.get(0); // Level 0
 
+      String itemId = jsonObject.getString("itemId");
+      System.out.println("itemId=" + itemId);
+      investmentData.setItemId(Integer.parseInt(itemId));
+      investmentData.setUserId(102); // TODO link it 
+      
+      
       JSONObject contentServiceInfoJson = jsonObject.getJSONObject("contentServiceInfo"); // Level 1
       JSONObject containerInfoJson = contentServiceInfoJson.getJSONObject("containerInfo");
       String containerName = containerInfoJson.getString("containerName");
@@ -557,25 +564,78 @@ public class SiteAccount {
       JSONArray accountsJsonArray = itemDataJson.getJSONArray("accounts");
       JSONObject accountJsonObject = (JSONObject) accountsJsonArray.get(0);
       String accountNumber = accountJsonObject.getString("accountNumber");
+      investmentData.setAccountNumber(accountNumber);
       String accountName = accountJsonObject.getString("accountName");
+      investmentData.setAccountName(accountName);
       String investmentAccountId = accountJsonObject.getString("investmentAccountId");
       String link = accountJsonObject.getString("link");
       String accountHolder = accountJsonObject.getString("accountHolder");
+      investmentData.setAccountHolder(accountHolder);
       String planName = accountJsonObject.getString("planName");
 
+      JSONObject accountClassificationJson = accountJsonObject.getJSONObject("accountClassification");
+      String accountClassificationId = accountClassificationJson.getString("accountClassificationId");
+      String accountClassification = accountClassificationJson.getString("accountClassification");
+      investmentData.setAccountClassification(accountClassification);
+      System.out.println("accountClassificationId=" + accountClassificationId);
+      System.out.println("accountClassification=" + accountClassification);
+
+      JSONObject asofDateJson = accountJsonObject.getJSONObject("asofDate");
+      String asofDate = asofDateJson.getString("date");
+      System.out.println("asofDate=" + asofDate);
+      investmentData.setAsOf(new Date()); // TODO convert string to date 
+
+
+
       JSONObject cashJson = accountJsonObject.getJSONObject("cash");
-      String amount = cashJson.getString("amount");
+      String cash_amount = cashJson.getString("amount");
       String currencyCode = cashJson.getString("currencyCode");
+      investmentData.setCash(Double.parseDouble(cash_amount));
 
 
       JSONObject totalBalanceJson = accountJsonObject.getJSONObject("totalBalance");
       String totalBalance_amount = totalBalanceJson.getString("amount");
       String totalBalance_currencyCode = totalBalanceJson.getString("currencyCode");
+      investmentData.setTotalBalance(Double.parseDouble(totalBalance_amount));
 
+      JSONObject shortBalanceJson = accountJsonObject.getJSONObject("shortBalance");
+      String shortBalance_amount = shortBalanceJson.getString("amount");
+      String shortBalance_currencyCode = shortBalanceJson.getString("currencyCode");
+      System.out.println("shortBalance=" + shortBalance_amount);
+      investmentData.setShortBalance(Double.parseDouble(shortBalance_amount));
+
+      JSONObject totalUnvestedBalanceJson = accountJsonObject.getJSONObject("totalUnvestedBalance");
+      String totalUnvestedBalanceJson_amount = totalUnvestedBalanceJson.getString("amount");
+      String totalUnvestedBalanceJson_currencyCode = totalUnvestedBalanceJson.getString("currencyCode");
+      System.out.println("totalUnvestedBalanceJson=" + totalUnvestedBalanceJson_amount);
+      investmentData.setTotalUnVestedBalance(Double.parseDouble(totalUnvestedBalanceJson_amount));
+      
+      JSONObject t401Json = accountJsonObject.getJSONObject("loan_401k");
+      String t401_amount = t401Json.getString("amount");
+      String t401currencyCode = t401Json.getString("currencyCode");
+      System.out.println("loan_401k=" + t401_amount);
+      investmentData.setT401kLoan(Double.parseDouble(t401_amount));
+
+      String planNumber = accountJsonObject.getString("planNumber");
+      System.out.println("planNumber=" + planNumber);
+      investmentData.setPlanNumber(planNumber);
+
+      JSONObject marginBalanceJson = accountJsonObject.getJSONObject("marginBalance");
+      String marginBalance_amount = marginBalanceJson.getString("amount");
+      String marginBalance_currencyCode = marginBalanceJson.getString("currencyCode");
+      System.out.println("marginBalance=" + marginBalance_amount);
+      investmentData.setMarginBalance(Double.parseDouble(marginBalance_amount));
+
+      JSONObject moneyMarketBalanceJson = accountJsonObject.getJSONObject("moneyMarketBalance");
+      String moneyMarketBalance_amount = moneyMarketBalanceJson.getString("amount");
+      String moneyMarketBalance_currencyCode = moneyMarketBalanceJson.getString("currencyCode");
+      System.out.println("moneyMarketBalance=" + moneyMarketBalance_amount);
+      investmentData.setMoneyMarketBalance(Double.parseDouble(moneyMarketBalance_amount));
 
       JSONObject totalVestedBalanceJson = accountJsonObject.getJSONObject("totalVestedBalance");
       String totalVestedBalance_amount = totalVestedBalanceJson.getString("amount");
       String totalVestedBalance_currencyCode = totalVestedBalanceJson.getString("currencyCode");
+      investmentData.setTotalVestedBalance(Double.parseDouble(totalVestedBalance_amount));
 
 
       JSONObject fundsOwedJson = accountJsonObject.getJSONObject("fundsOwed");
@@ -595,7 +655,8 @@ public class SiteAccount {
       System.out.println("link=" + link);
       System.out.println("accountHolder=" + accountHolder);
       System.out.println("planName=" + planName);
-      System.out.println("cash_amount=" + amount);
+      investmentData.setPlanName(planName);
+      System.out.println("cash_amount=" + cash_amount);
       System.out.println("cash_currencyCode=" + currencyCode);
       System.out.println("totalBalance_amount=" + totalBalance_amount);
       System.out.println("totalBalance_currencyCode=" + totalBalance_currencyCode);
@@ -607,12 +668,65 @@ public class SiteAccount {
       System.out.println("totalAccountBalance_currencyCode=" + totalAccountBalance_currencyCode);
 
 
+      JSONArray holdingsJSONArray = accountJsonObject.getJSONArray("holdings");
+      System.out.println("holdingsJSONArray.length()=" + holdingsJSONArray.length());;
+
+      JSONObject holdingElementJson;
+
+      for (int i = 0; i < holdingsJSONArray.length(); i++) {
+
+        holdingElementJson = (JSONObject) holdingsJSONArray.get(i);
+        String holdingId = holdingElementJson.getString("holdingId");
+        System.out.println("holdingId=" + holdingId);
+
+        String investmentAccountId1 = holdingElementJson.getString("investmentAccountId");
+        System.out.println("holdingId=" + investmentAccountId1);
+
+        JSONObject lastContributionJson = holdingElementJson.getJSONObject("lastContribution");
+        String lastContributionAmount = lastContributionJson.getString("amount");
+        System.out.println("lastContributionAmount=" + lastContributionAmount);
+
+        String callTypeId = holdingElementJson.getString("callTypeId");
+        System.out.println("callTypeId=" + callTypeId);
+        String callType = holdingElementJson.getString("callType");
+        System.out.println("callType=" + callType);
+
+        String localizedCallType = holdingElementJson.getString("localizedCallType");
+        System.out.println("localizedCallType=" + localizedCallType);
+
+        // JSONObject faceValueJson = holdingElementJson.getJSONObject("faceValue");
+        // String faceValueAmount = faceValueJson.getString("amount");
+        // System.out.println("faceValueAmount=" + faceValueAmount);
+
+        String percentAllocation = holdingElementJson.getString("percentAllocation");
+        System.out.println("percentAllocation=" + percentAllocation);
+
+        String daysRemaining = "";
+        if (holdingElementJson.has("daysRemaining")) {
+          daysRemaining = holdingElementJson.getString("daysRemaining");
+        }
+        System.out.println("daysRemaining=" + daysRemaining);
+
+        String term = "";
+        if (holdingElementJson.has("term")) {
+          term = holdingElementJson.getString("term");
+        }
+        System.out.println("term=" + term);
+
+        String interestRate = "";
+        if (holdingElementJson.has("term")) {
+          interestRate = holdingElementJson.getString("interestRate");
+        }
+        System.out.println("interestRate=" + interestRate);
+      }
 
     } catch (Exception e) {
       e.printStackTrace();
     } finally {
       httpclient.getConnectionManager().shutdown();
     }
+    
+    this.setInvestmentData(investmentData);
     return this;
 
   }

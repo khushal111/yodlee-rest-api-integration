@@ -156,6 +156,8 @@ public class MainApp {
     LOG.debug("\n\n\n\n Step 9: GetItemSummariesForSite");
     siteAccount = siteAccount.getItemSummariesForSite(coBrandSessionToken, userSessionToken);
     // http://pastebin.com/6nkP3r41
+    InvestmentDataDB investmentDataDB = new InvestmentDataDB();
+    investmentDataDB.persistInDB(siteAccount);
 
 
     // 10: Refresh button
